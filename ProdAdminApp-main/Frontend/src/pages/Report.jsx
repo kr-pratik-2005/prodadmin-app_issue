@@ -31,6 +31,7 @@ function convertTo12HourFormat(time24) {
   return `${hour}:${minute} ${suffix}`;
 }
 
+
 const Report = () => {
   const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().substring(0, 10));
@@ -290,11 +291,11 @@ const Report = () => {
           <div style={styles.inlineContainer}>
             <div style={{ flex: 1 }}>
               <label style={{ fontSize: '14px', fontWeight: '500' }}>In</label>
-              <input type='time' name='inTime' style={styles.inputTime} required value={formData.inTime} onChange={handleChange} />
+              <input type='time' name='inTime' style={styles.inputTime}  value={formData.inTime} onChange={handleChange} />
             </div>
             <div style={{ flex: 1 }}>
               <label style={{ fontSize: '14px', fontWeight: '500' }}>Out</label>
-              <input type='time' name='outTime' style={styles.inputTime} required value={formData.outTime} onChange={handleChange} />
+              <input type='time' name='outTime' style={styles.inputTime}  value={formData.outTime} onChange={handleChange} />
             </div>
           </div>
 
@@ -303,7 +304,14 @@ const Report = () => {
           <div style={styles.radioGroup}>
             {['None', 'Some', 'Half', 'Most', 'All'].map(opt => (
               <label key={opt} style={{ fontWeight: '500' }}>
-                <input type='radio' name='snack' value={opt} onChange={handleChange} checked={formData.snack===opt} required /> {opt}
+               <input
+  type='radio'
+  name='snack'
+  value={opt}
+  onChange={handleChange}
+  checked={formData.snack===opt}
+/> {opt}
+
               </label>
             ))}
           </div>
@@ -311,7 +319,14 @@ const Report = () => {
           <div style={styles.radioGroup}>
             {['None', 'Some', 'Half', 'Most', 'All'].map(opt => (
               <label key={opt} style={{ fontWeight: '500' }}>
-                <input type='radio' name='meal' value={opt} onChange={handleChange} checked={formData.meal===opt} required /> {opt}
+                <input
+  type='radio'
+  name='meal'
+  value={opt}
+  onChange={handleChange}
+  checked={formData.meal===opt}
+/> {opt}
+
               </label>
             ))}
           </div>
@@ -326,11 +341,27 @@ const Report = () => {
           <div style={styles.inlineContainer}>
             <div style={{ flex: 1 }}>
               <label style={{ fontSize: '14px', fontWeight: '500' }}>From</label>
-              <input type='time' name='sleepFrom' style={styles.inputTime} value={formData.sleepFrom} onChange={handleChange} disabled={formData.sleepNot} required={!formData.sleepNot} />
+              <input
+  type='time'
+  name='sleepFrom'
+  style={styles.inputTime}
+  value={formData.sleepFrom}
+  onChange={handleChange}
+  disabled={formData.sleepNot}
+/>
+
             </div>
             <div style={{ flex: 1 }}>
               <label style={{ fontSize: '14px', fontWeight: '500' }}>To</label>
-              <input type='time' name='sleepTo' style={styles.inputTime} value={formData.sleepTo} onChange={handleChange} disabled={formData.sleepNot} required={!formData.sleepNot} />
+              <input
+  type='time'
+  name='sleepTo'
+  style={styles.inputTime}
+  value={formData.sleepTo}
+  onChange={handleChange}
+  disabled={formData.sleepNot}
+/>
+
             </div>
           </div>
 
@@ -348,7 +379,7 @@ const Report = () => {
               <div style={styles.radioGroup}>
                 {radioOptions.map(opt => (
                   <label key={opt} style={{ fontWeight: '500' }}>
-                    <input type='radio' name='toiletVisits' value={String(opt)} onChange={handleChange} checked={formData.toiletVisits===String(opt)} required /> {opt}
+                    <input type='radio' name='toiletVisits' value={String(opt)} onChange={handleChange} checked={formData.toiletVisits===String(opt)}  /> {opt}
                   </label>
                 ))}
               </div>
@@ -359,7 +390,7 @@ const Report = () => {
               <div style={styles.radioGroup}>
                 {radioOptions.map(opt => (
                   <label key={opt} style={{ fontWeight: '500' }}>
-                    <input type='radio' name='diaperChanges' value={String(opt)} onChange={handleChange} checked={formData.diaperChanges===String(opt)} required /> {opt}
+                    <input type='radio' name='diaperChanges' value={String(opt)} onChange={handleChange} checked={formData.diaperChanges===String(opt)}  /> {opt}
                   </label>
                 ))}
               </div>
@@ -371,7 +402,7 @@ const Report = () => {
           <div style={styles.radioGroup}>
             {radioOptions.map(opt => (
               <label key={opt} style={{ fontWeight: '500' }}>
-                <input type='radio' name='poops' value={String(opt)} onChange={handleChange} checked={formData.poops===String(opt)} required /> {opt}
+                <input type='radio' name='poops' value={String(opt)} onChange={handleChange} checked={formData.poops===String(opt)}  /> {opt}
               </label>
             ))}
           </div>
