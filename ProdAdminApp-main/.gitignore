@@ -1,5 +1,29 @@
-import_to_firestoe.py
-firebase.js
-node_modules/
-se
+# Firebase service key - DO NOT TRACK THIS
 serviceAccountKey.json
+
+# Node.js dependencies
+node_modules/
+
+# React and build artifacts
+build/
+dist/
+
+# Environment files
+.env
+.env.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# macOS and system files
+.DS_Store
+Thumbs.db
+
+# VSCode settings (optional)
+.vscode/
+
+# Firebase web config (ignore if you only use firebase.js locally)
+src/firebase/firebase.js
+import_to_firestore.py
