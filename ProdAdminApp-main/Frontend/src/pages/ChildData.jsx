@@ -6,7 +6,177 @@ import { useNavigate } from 'react-router-dom';
 
 const ChildData = () => {
   const navigate = useNavigate();
+  const handleNewChild = () => {
+    setSelectedChild({}); // blank object = new child
+    setFormData({
+      name: '',
+      dob: '',
+      bloodGroup: '',
+      nickName: '',
+      language: '',
+      mobileNumber: '',
+      address: '',
+      email: '',
+      email2: '',
+      medicalNotes: '',
+      allergies: '',
+      medicationDetails: '',
+      medicationNeeds: '',
+      dietaryRestrictions: '',
+      developmentNotes: '',
+      pottyTrained: '',
+      sleepTrained: '',
+      eatsIndependently: '',
+      attendedDaycare: '',
+      previousDaycareDetails: '',
+      likesAndDislikes: '',
+      enjoyedActivities: '',
+      triggersAndCalming: '',
+      behaviorWithOtherChildren: '',
+      learningStyleInfo: '',
+      dailyRoutine: '',
+      sleepSchedule: '',
+      mealSchedule: '',
+      mealPreferences: '',
+      culturalPractices: '',
+      communicationForFeelings: '',
+      additionalInfo: '',
+      expectations: ''
+    });
+    setIsConfirmed(false);
+  };
+
+const requiredFields = {
+  name: "Name",
+  dob: "Date of Birth",
+  nickName: "Nickname",
+  language: "Language spoken at home",
   
+  address: "Block & Flat No",
+  pottyTrained: "Potty Trained",
+  sleepTrained: "Sleep Trained",
+  eatsIndependently: "Eats Independently",
+  attendedDaycare: "Attended Daycare Before",
+  dailyRoutine: "Daily Routine",
+  mealSchedule: "Meal Schedule",
+  expectations: "Expectations from Mimansa"
+};
+
+
+
+
+
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  // Build the child data object from formData
+  const childData = {
+    name: formData.name.trim(),
+    dob: formData.dob || '',
+    bloodGroup: formData.bloodGroup || '',
+    nickName: formData.nickName || '',
+    language: formData.language || '',
+    mobileNumber: formData.mobileNumber || '',
+    address: formData.address || '',
+    email: formData.email || '',
+    email2: formData.email2 || '',
+    medicalNotes: formData.medicalNotes || '',
+    allergies: formData.allergies || '',
+    medicationDetails: formData.medicationDetails || '',
+    medicationNeeds: formData.medicationNeeds || '',
+    dietaryRestrictions: formData.dietaryRestrictions || '',
+    developmentNotes: formData.developmentNotes || '',
+    pottyTrained: formData.pottyTrained || '',
+    sleepTrained: formData.sleepTrained || '',
+    eatsIndependently: formData.eatsIndependently || '',
+    attendedDaycare: formData.attendedDaycare || '',
+    previousDaycareDetails: formData.previousDaycareDetails || '',
+    likesAndDislikes: formData.likesAndDislikes || '',
+    enjoyedActivities: formData.enjoyedActivities || '',
+    triggersAndCalming: formData.triggersAndCalming || '',
+    behaviorWithOtherChildren: formData.behaviorWithOtherChildren || '',
+    learningStyleInfo: formData.learningStyleInfo || '',
+    dailyRoutine: formData.dailyRoutine || '',
+    sleepSchedule: formData.sleepSchedule || '',
+    mealSchedule: formData.mealSchedule || '',
+    mealPreferences: formData.mealPreferences || '',
+    culturalPractices: formData.culturalPractices || '',
+    communicationForFeelings: formData.communicationForFeelings || '',
+    additionalInfo: formData.additionalInfo || '',
+    expectations: formData.expectations || '',
+    updatedAt: new Date().toISOString()
+  };
+
+  if (!isConfirmed) {
+    alert("Please confirm the information checkbox.");
+    return;
+  }
+
+  try {
+    if (selectedChild && selectedChild.id) {
+      // Update existing child
+      await updateDoc(doc(db, "students", selectedChild.id), childData);
+      alert("Child data updated successfully.");
+    } else {
+      // Add new child
+      await addDoc(collection(db, "students"), childData);
+      alert("New child data added successfully.");
+    }
+
+    // Reset form and selection
+    setSelectedChild(null);
+    setFormData({
+      name: '',
+      dob: '',
+      bloodGroup: '',
+      nickName: '',
+      language: '',
+      mobileNumber: '',
+      address: '',
+      email: '',
+      email2: '',
+      medicalNotes: '',
+      allergies: '',
+      medicationDetails: '',
+      medicationNeeds: '',
+      dietaryRestrictions: '',
+      developmentNotes: '',
+      pottyTrained: '',
+      sleepTrained: '',
+      eatsIndependently: '',
+      attendedDaycare: '',
+      previousDaycareDetails: '',
+      likesAndDislikes: '',
+      enjoyedActivities: '',
+      triggersAndCalming: '',
+      behaviorWithOtherChildren: '',
+      learningStyleInfo: '',
+      dailyRoutine: '',
+      sleepSchedule: '',
+      mealSchedule: '',
+      mealPreferences: '',
+      culturalPractices: '',
+      communicationForFeelings: '',
+      additionalInfo: '',
+      expectations: ''
+    });
+    setIsConfirmed(false);
+
+    // Refresh the list of children (if you have such a function)
+    if (typeof loadKidsInfo === 'function') {
+      await loadKidsInfo();
+    }
+  } catch (error) {
+    console.error("Error saving data:", error);
+    alert("Something went wrong. Please try again.");
+  }
+};
+
+
+
+
+
   // Get URL parameters
   const urlParams = new URLSearchParams(window.location.search);
   const childFromUrl = urlParams.get('child') || '';
@@ -59,47 +229,54 @@ const ChildData = () => {
   });
 
   // Fetch all children from kidsInfo collection
-  useEffect(() => {
-    const fetchChildren = async () => {
-      try {
-        const kidsSnapshot = await getDocs(collection(db, 'students'));
-        const childrenData = [];
-        
-        kidsSnapshot.docs.forEach(doc => {
-          const data = doc.data();
-          childrenData.push({
-            id: doc.id,
-            name: data.name,
-            dob: data.dob || '',
-            bloodGroup: data.bloodGroup || '',
-            nickName: data.nickName || data.name,
-            language: data.language || '',
-            mobileNumber: data.mobileNumber || '',
-            address: data.address || '',
-            email: data.email || '',
-            email2: data.email2 || '',
-            hasCompleteData: !!(data.dob && data.bloodGroup && data.language && data.mobileNumber && data.address && data.medicalNotes && data.developmentNotes)
-          });
-        });
+const fetchChildren = async () => {
+  try {
+    const kidsSnapshot = await getDocs(collection(db, 'students'));
+    const childrenData = [];
 
-        setChildren(childrenData);
-        
-        // If childFromUrl is specified, auto-select that child
-        if (childFromUrl) {
-          const childData = childrenData.find(child => child.name === childFromUrl);
-          if (childData) {
-            handleChildSelect(childData);
-          }
+    kidsSnapshot.docs.forEach(docSnap => {
+      const data = docSnap.data();
+
+      const missingFields = [];
+
+      // Check only requiredFields
+      for (const key in requiredFields) {
+        const val = data[key];
+        if (!val || (typeof val === "string" && val.trim() === "")) {
+          missingFields.push(key);
         }
-
-      } catch (err) {
-        console.error('Error fetching children:', err);
       }
-    };
-    
-    fetchChildren();
-  }, [childFromUrl]);
 
+      childrenData.push({
+        id: docSnap.id,
+        ...data,
+        hasCompleteData: missingFields.length === 0
+      });
+    });
+
+    setChildren(childrenData);
+
+    // Auto-select child from URL
+    if (childFromUrl) {
+      const childData = childrenData.find(child => child.name === childFromUrl);
+      if (childData) {
+        handleChildSelect(childData);
+      }
+    }
+  } catch (err) {
+    console.error("Error fetching children:", err);
+  }
+};
+
+
+useEffect(() => {
+  fetchChildren();
+}, [childFromUrl]);
+
+
+
+
+  
   const handleChildSelect = (child) => {
     setSelectedChild(child);
     setFormData({
@@ -155,71 +332,43 @@ const ChildData = () => {
     }));
   };
 
-  // Update child data in Firestore
-  const handleUpdate = async (e) => {
-    e.preventDefault();
-    try {
-      const childData = {
-        name: formData.name,
-        dob: formData.dob,
-        bloodGroup: formData.bloodGroup,
-        nickName: formData.nickName,
-        language: formData.language,
-        mobileNumber: formData.mobileNumber,
-        address: formData.address,
-        email: formData.email,
-        email2: formData.email2,
-        medicalNotes: formData.medicalNotes,
-        allergies: formData.allergies,
-        medicationDetails: formData.medicationDetails,
-        medicationNeeds: formData.medicationNeeds,
-        dietaryRestrictions: formData.dietaryRestrictions,
-        developmentNotes: formData.developmentNotes,
-        pottyTrained: formData.pottyTrained,
-        sleepTrained: formData.sleepTrained,
-        eatsIndependently: formData.eatsIndependently,
-        attendedDaycare: formData.attendedDaycare,
-        previousDaycareDetails: formData.previousDaycareDetails,
-        likesAndDislikes: formData.likesAndDislikes,
-        enjoyedActivities: formData.enjoyedActivities,
-        triggersAndCalming: formData.triggersAndCalming,
-        behaviorWithOtherChildren: formData.behaviorWithOtherChildren,
-        learningStyleInfo: formData.learningStyleInfo,
-        dailyRoutine: formData.dailyRoutine,
-        sleepSchedule: formData.sleepSchedule,
-        mealSchedule: formData.mealSchedule,
-        mealPreferences: formData.mealPreferences,
-        culturalPractices: formData.culturalPractices,
-        communicationForFeelings: formData.communicationForFeelings,
-        additionalInfo: formData.additionalInfo,
-        expectations: formData.expectations,
-        updatedAt: new Date().toISOString()
-      };
+ const handleUpdate = async (e) => {
+  e.preventDefault();
+  const missingFields = getMissingFields();
 
-        if (!isConfirmed) {
-            alert('Please confirm that the information provided is accurate.');
-            return;
-        }
+  if (missingFields.length > 0) {
+    alert(
+      "Please fill all the required fields:\n\n" +
+      missingFields.map((field, index) => `${index + 1}. ${field}`).join("\n")
+    );
+    return;
+  }
 
-      if (selectedChild.id) {
-        // Update existing child data
-        const ref = doc(db, 'kidsInfo', selectedChild.id);
-        await updateDoc(ref, childData);
-        alert('Child data updated successfully!');
-      } else {
-        // This shouldn't happen in normal flow, but handle just in case
-        await addDoc(collection(db, 'kidsInfo'), childData);
-        alert('Child data created successfully!');
-      }
-      
-      setSelectedChild(null);
-      // Refresh the children list
-      window.location.reload();
-    } catch (err) {
-      console.error('Error updating child data:', err);
-      alert('Failed to save child data.');
+  try {
+    const childData = {
+      ...formData,
+      updatedAt: new Date().toISOString()
+    };
+
+    if (selectedChild && selectedChild.id) {
+      const ref = doc(db, 'students', selectedChild.id);
+      await updateDoc(ref, childData);
+      alert('Child data updated successfully!');
+    } else {
+      await addDoc(collection(db, 'students'), childData);
+      alert('Child data created successfully!');
     }
-  };
+
+    setSelectedChild(null);
+    await fetchChildren();
+
+
+  } catch (err) {
+    console.error('Error saving child data:', err);
+    alert('Failed to save child data.');
+  }
+};
+
 
   const YesNoButton = ({ name, value, onChange, label }) => {
   return (
@@ -267,20 +416,23 @@ const ChildData = () => {
       color: '#333',
       fontSize: '18px',
       fontWeight: '600',
-      padding: '16px 20px',
+      padding: '0 20px',
       backgroundColor: '#fff',
       //borderBottom: '1px solid #e9ecef',
       display: 'flex',
       alignItems: 'center',
       gap: '12px',
-      position: 'relative'
+      position: 'relative',
+       
     },
     backArrow: {
       fontSize: '18px',
       cursor: 'pointer',
       color: '#666',
       position: 'absolute',
-      left: '20px'
+      left: '20px',
+      top:'0px',lineHeight: '1', // Ensures no extra vertical space
+  padding: '0'
     },
     headerTitle: {
       flex: 1,
@@ -523,59 +675,155 @@ const ChildData = () => {
   }
   };
 
+
+
+
+
+
+
   return (
     <div style={styles.container}>
       {!selectedChild ? (
+        
         <>
-          {/* Header for Children List */}
-          <div style={styles.header}>
+        <div style={styles.header}>
             <span style={styles.backArrow} onClick={() => navigate('/')}>
               ←
             </span>
-            <div style={styles.headerTitle}>Child Data</div>
+            
           </div>
+  <div style={styles.gridContainer}>
+    {/* Add New Student card */}
+    <div
+      style={{
+        ...styles.childBox,
+        backgroundColor: '#4CAF50',
+        color: 'white',
+        cursor: 'pointer',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        fontWeight: 'bold',
+        fontSize: '14px'
+      }}
+      onClick={() => {
+        setSelectedChild({});
+        setFormData({
+          name: '',
+          dob: '',
+          bloodGroup: '',
+          nickName: '',
+          language: '',
+          mobileNumber: '',
+          address: '',
+          email: '',
+          email2: '',
+          medicalNotes: '',
+          allergies: '',
+          medicationDetails: '',
+          medicationNeeds: '',
+          dietaryRestrictions: '',
+          developmentNotes: '',
+          pottyTrained: '',
+          sleepTrained: '',
+          eatsIndependently: '',
+          attendedDaycare: '',
+          previousDaycareDetails: '',
+          likesAndDislikes: '',
+          enjoyedActivities: '',
+          triggersAndCalming: '',
+          behaviorWithOtherChildren: '',
+          learningStyleInfo: '',
+          dailyRoutine: '',
+          sleepSchedule: '',
+          mealSchedule: '',
+          mealPreferences: '',
+          culturalPractices: '',
+          communicationForFeelings: '',
+          additionalInfo: '',
+          expectations: ''
+        });
+        setIsConfirmed(false);
+      }}
+    >
+      ➕<div style={{ marginTop: '4px' }}>Add New Student</div>
+    </div>
+
+    
+  </div>
+
+        
+          {/* Header for Children List */}
           
+          <div style={styles.headerTitle}>Edit Existing Child Data</div>
           {children.length === 0 ? (
             <p style={{ textAlign: 'center', padding: '20px' }}>No children found.</p>
           ) : (
-            <div style={styles.gridContainer}>
-              {children.map((child, idx) => {
-                const colors = ['#A0C4FF','#FFD6A5','#FFC6FF','#FDFFB6','#CAFFBF','#9BF6FF','#BDB2FF','#FFC6FF'];
-                const hasCompleteData = child.hasCompleteData;
-                
-                return (
-                  <div
-                    key={`${child.name}-${idx}`}
-                    style={{ ...styles.childBox, backgroundColor: colors[idx % colors.length] }}
-                    onClick={() => handleChildSelect(child)}
-                  >
-                    <div 
-                      style={{
-                        ...styles.childStatus,
-                        ...(hasCompleteData ? styles.statusComplete : styles.statusIncomplete)
-                      }}
-                    >
-                      {hasCompleteData ? '✓' : '!'}
-                    </div>
-                    <strong>{child.name}</strong>
-                    <div style={{ fontSize: '10px', marginTop: '5px' }}>
-                      {hasCompleteData ? 'Data Complete' : 'Data Incomplete'}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+          <div style={styles.gridContainer}>
+  {children.map((child, idx) => {
+    const colors = ['#A0C4FF','#FFD6A5','#FFC6FF','#FDFFB6','#CAFFBF','#9BF6FF','#BDB2FF','#FFC6FF'];
+
+   
+
+
+
+    // ✅ Step 2: check completeness
+   const hasCompleteData = Object.keys(requiredFields).every(
+  field =>
+    formData[field] !== undefined &&
+    formData[field] !== null &&
+    formData[field].toString().trim() !== ''
+);
+
+
+
+    return (
+      <div
+        key={`${child.name}-${idx}`}
+        style={{ ...styles.childBox, backgroundColor: colors[idx % colors.length] }}
+        onClick={() => handleChildSelect(child)}
+      >
+        <div 
+          style={{
+            ...styles.childStatus,
+            ...(hasCompleteData ? styles.statusComplete : styles.statusIncomplete)
+          }}
+        >
+          {child.hasCompleteData ? '✓' : '!'}
+        </div>
+
+        <strong>{child.name}</strong>
+
+        {/* ✅ Step 3: Show dynamic status */}
+  <div style={{ fontSize: '10px', marginTop: '5px', color: '#000000' }}>
+  {child.hasCompleteData ? (
+    <span>
+      Data Complete <span style={{ textDecoration: 'underline', cursor: 'pointer' }}>(Edit?)</span>
+    </span>
+  ) : (
+    'Data Incomplete'
+  )}
+</div>
+
+
+      </div>
+    );
+  })}
+</div>
+
           )}
         </>
       ) : (
         <>
           {/* Header for Child Form */}
-          <div style={styles.header}>
-            <span style={styles.backArrow} onClick={() => setSelectedChild(null)}>
-              ←
-            </span>
-            <div style={styles.headerTitle}>Child Data</div>
-          </div>
+          <div style={{ ...styles.header, marginTop: '16px', paddingTop: '8px' }}>
+  <span style={styles.backArrow} onClick={() => setSelectedChild(null)}>
+    ←
+  </span>
+  <div style={styles.headerTitle}>Child Data</div>
+</div>
+
 
           <form style={styles.formContainer} onSubmit={handleUpdate}>
             {/* Basic Information Section */}
@@ -1197,9 +1445,13 @@ const ChildData = () => {
             </div>
             </div>
 
-            <button type="submit" style={styles.submitButton}>
-              Submit
-            </button>
+            <div onSubmit={handleSubmit}>
+  {/* all your input fields */}
+  <button type="submit" style={styles.submitButton}>
+    Submit
+  </button>
+</div>
+
           </form>
         </>
       )}
