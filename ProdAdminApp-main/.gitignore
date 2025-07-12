@@ -2,3 +2,4 @@ serviceAccountKey.json
 import_to_firestore.py
 firebase.js
 node_modules/
+serviceAccountKey.json
